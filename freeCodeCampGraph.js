@@ -235,10 +235,68 @@ const shortestPath = (edges, nodeA, nodeB) => {
   return -1;
 };
 
-
-
-
-
 ///////////////// ISLANDS COUNT /////////////////////////////
 
+const islandCount = (grid) => {
+  const visited = new Set();
+  const count = 0;
 
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[0].length; c++) {
+      if (explore(grid, r, c, visited)) count++;
+    }
+  }
+  return count;
+};
+function explore(grid, r, c, visited) {
+  const rowInbounds = 0 < r && r < grid.length;
+  const colInbounds = 0 < r && r < grid[0].length;
+  if (!rowInbounds || !colInbounds) return false;
+
+  if (grid[r][c] === "w") return false;
+
+  const pos = r + "," + c;
+  if (visited.has(pos)) return false;
+  visited.add(pos);
+
+  explore(grid, r - 1, c, visited);
+  explore(grid, r + 1, c, visited);
+  explore(grid, r, c - 1, visited);
+  explore(grid, r, c + 1, visited);
+
+  return true;
+}
+
+//////////////// Minimal size island ////////////////////////
+
+const minimumIsland = (grid) => {
+  const visited = new Set();
+
+  let minSize = Infinity;
+
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[0].length; c++) {
+      const size = exploreSize(grid, r, c, visited);
+      if (size > 0) {
+        minSize = Math.min(size, minSize);
+      }
+    }
+  }
+  return minSize;
+};
+
+function exploreSize(grid, r, c, visited) {
+  if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length) return 0;
+  if (grid[r][c] === "W") return 0;
+
+  const pos = r + "," + c;
+  if (visited.has(pos)) return 0;
+  visited.set(pos);
+
+  let size = 1;
+  size += exploreSize(grid, r - 1, c, visited);
+  size += exploreSize(grid, r + 1, c, visited);
+  size += exploreSize(grid, r, c - 1, visited);
+  size += exploreSize(grid, r, c + 1, visited);
+  return size;
+}
